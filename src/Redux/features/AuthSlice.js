@@ -1,9 +1,9 @@
 import { createSlice,createAsyncThunk} from "@reduxjs/toolkit";
 import axios from '../../axios'
-//import { auth } from "../url";
+import { auth } from "../../url";
 
 const initialState={
-    msg:"",
+    token:"",
     user:"",
     loading:"",
     error:""
@@ -11,56 +11,112 @@ const initialState={
 
 export const signUpUser=createAsyncThunk('signupuser',async(body)=>{
     console.log("Sec.........",body.data);
-    return await axios.post('register',body.data).then((res)=>{
-        return console.log(res.data)
+    return await axios.post(`${auth}register`,body.data).then(({data})=>{
+     console.log(data,"its the response in the register user create AsyncThunk")
+     return data
     })
 })
 
 export const loginUser=createAsyncThunk('loginUser',async(body)=>{
     console.log(body,"this is the console log of login user ")
-    return await axios.post('login',body.data).then((res)=>{
-        return console.log(res,"its the responce of login")
+    return await axios.post(`${auth}login`,body).then(({data})=>{
+        console.log(data,"its the responce of login@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+        return data;    
     })
 })
 
-export const authslice = createSlice({
+export const googleUser=createAsyncThunk('googleuser',async(body)=>{
+    console.log("google user body in the thunk ",body);
+    return await axios.post(`${auth}google`,body).then(({data})=>{
+     console.log(data,"its the response in the Google user create AsyncThunk")
+     return data
+    })
+})
+
+ const authslice = createSlice({
     name:"user",
     initialState,
-    extraReducers:{
+    reducers:{
+        addToken :(state,action)=>{
+            localStorage.getItem("token")
+        },
+        addUser :(state,action)=>{
+            state.user=JSON.parse(localStorage.getItem("user"))
+        },
+        logout :(state,action)=>{
+            state.token=null
+            localStorage.clear()
+        }
+    },
+    extraReducers(builder){
        
         //...........signUp...............
-        [signUpUser.pending]:(state,action)=>{
+        builder.addCase(signUpUser.pending,(state,action)=>{
             state.loading =true
-        },
-        [signUpUser.fulfilled]:(state,{payload:error,msg})=>{
+            console.log(state.user.username,"it is in the pending state of the signup user in the  Auth slice")
+        })
+        builder.addCase(signUpUser.fulfilled,(state,action)=>{
             state.loading =false
-            if(error){
-                state.error =error
-            }else{
-                state.msg=msg
-            }
-        },
-        [signUpUser.rejected]:(state,action)=>{
+          state.loading =false
+            let  user = action.payload.username
+            let token = action.payload.token
+
+            state.user=user
+            state.token=token
+
+            localStorage.setItem('user',JSON.stringify(user))
+            localStorage.setItem('token',token)
+            
+            console.log(action,"the output is in AuthSlice.js and testing the fullfilled state is corect or not of signUp",token)
+        })
+        builder.addCase(signUpUser.rejected,(state,action)=>{
             state.loading =false
-        },
+        })
 
         //............Login..................
-        [loginUser.pending]:(state,action)=>{
+        builder.addCase(loginUser.pending,(state,action)=>{
             state.loading =true
-        },
-        [loginUser.fulfilled]:(state,{payload:error,msg})=>{
+         
+        })
+        builder.addCase(loginUser.fulfilled,(state,action)=>{
+          
             state.loading =false
-            if(error){
-                state.error =error
-            }else{
-                state.msg=msg
-            }
-        },
-        [loginUser.rejected]:(state,action)=>{
+            let  user = action.payload.username
+            let token = action.payload.token
+
+            state.user=user
+            state.token=token
+
+            localStorage.setItem('user',JSON.stringify(user))
+            localStorage.setItem('token',token)
+            
+            console.log(action,"the output is in AuthSlice.js and testing the fullfilled state is corect or not",token)
+        })
+
+        //.................Google User...........
+        builder.addCase(googleUser.pending,(state,action)=>{
+            state.loading =true
+         
+        })
+        builder.addCase(googleUser.fulfilled,(state,action)=>{
+          
             state.loading =false
-        },
+            let  user = action.payload.username
+            let token = action.payload.token
+
+            state.user=user
+            state.token=token
+
+            localStorage.setItem('user',JSON.stringify(user))
+            localStorage.setItem('token',token)
+            
+            console.log(action,"the output is in AuthSlice.js and testing the fullfilled state is corect or not",token)
+        })
+        builder.addCase(googleUser.rejected,(state,action)=>{
+            state.loading =false
+        })
     }
 })
- 
-// export const {addToken, addUser, logout}=authslice.actions
-//export default authslice.reducer
+
+ export const {addToken, addUser, logout}=authslice.actions
+export default authslice.reducer

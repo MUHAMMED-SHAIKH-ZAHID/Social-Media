@@ -1,12 +1,19 @@
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import { loginUser, signUpUser } from "../../Redux/features/AuthSlice";
+import React, { useEffect, useState } from "react";
+import { useDispatch} from "react-redux";
+import   { googleUser, loginUser, signUpUser } from "../../Redux/features/AuthSlice";
 import sideimage from "../../Images/halfthrotle.png";
+import jwt_decode from "jwt-decode"
+import { Navigate, useNavigate } from "react-router-dom";
+
 
 const Auth = () => {
   const [isSignup, setIsSignup] = useState(false);
 
   const dispatch=useDispatch()
+  const navigate=useNavigate()
+  // const {user} = useSelector((state)=>state)
+  // console.log(user.loading,"its the mufeedhs thory of user")
+
 
   const [data, setData] = useState({
     firstname: "",
@@ -16,36 +23,98 @@ const Auth = () => {
     password: "",
     confirmpassword: "",
   });
+  
+
 
   const handleChange = (e) => {
     console.log(e.target.name);
     setData({ ...data, [e.target.name]: e.target.value });
   };
-
+ const [firstname,setFirstname] =useState(true)
+  const [username,setUsername] = useState(true)
+  const [password,setPassword] = useState(true)
+  const [email,setEmail]=useState(true)
   const [confirmPass, setConfirmPass] = useState(true);
+ 
+
+function handleCallbackResponse(response){
+  var userObject=jwt_decode(response.credential);
+  dispatch(googleUser(userObject)).then(()=>{
+    navigate('/')
+  })
+}
+
+  useEffect(()=>{
+    /*global  google*/
+  google.accounts.id.initialize({
+  client_id : "818498261522-04tni7bfiplq7c4igg1qvli7idr8a6k7.apps.googleusercontent.com",
+  callback: handleCallbackResponse,
+});
+
+  google.accounts.id.renderButton(
+  document.getElementById("googlebtn"),
+  {theme:"outline",size:"large",shape:"rectangle"}
+);
+ //google.accounts.id.prompt();
+
+  },[ isSignup ])
+  
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("entred to handle submmit");
+    console.log("entred to handle submmit",data.username);
+    let usernameRegex =/^[a-zA-Z0-9]{5,12}$/
+    let PasswordRegex =/^[a-zA-Z0-9]{5,15}$/
+    let emailRegex =/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+    let firstnameRegex =/^[a-zA-Z0-9]{4,12}$/
+    usernameRegex.test(data.username) ? setUsername(true) : setUsername(false)
+    PasswordRegex.test(data.password) ? setPassword(true) : setPassword(false)
+    if( usernameRegex.test(data.username) &&  PasswordRegex.test(data.password)){
+      if (isSignup) {
+        firstnameRegex.test(data.firstname) ? setFirstname(true):setFirstname(false)
+        emailRegex.test(data.email) ? setEmail(true) : setEmail(false)
+        if (data.password !== data.confirmpassword || data.password === undefined) {
+          setConfirmPass(false);
+        } else {
+          console.log("password is correct" ,data.password);
+          setConfirmPass(true);
+          if( firstnameRegex.test(data.firstname) &&  emailRegex.test(data.email)){
 
-    if (isSignup) {
-      if (data.password !== data.confirmpassword) {
-        setConfirmPass(false);
-      } else {
-        console.log("password is correct" ,data);
-        setConfirmPass(true);
-        dispatch(signUpUser({data}))
-        
+            dispatch(signUpUser({data})).then(()=>{
+              navigate('/')
+            })
+          }else{
+            console.log("firstname or email is null")
+          }
+          
+        }
+      }else{
+        console.log("the login button is working successfully")
+       dispatch(loginUser({data})).then(()=>{
+          navigate('/');
+       })
       }
-    }else{
-      console.log("the login button is working successfully")
-      dispatch(loginUser({data}))
     }
+    else{
+      console.log("cannot submmit the null object");
+    }
+
+  
+  
   };
 
   const reverseForm = () => {
     setConfirmPass(true);
-    setData({});
+    setEmail(true);
+    setUsername(true)
+    setPassword(true)
+    setFirstname(true)
+    setData({ firstname: "",
+    lastname: "",
+    username: "",
+    email: "",
+    password: "",
+    confirmpassword: "",});
   };
 
   return (
@@ -70,9 +139,13 @@ const Auth = () => {
                       className="p-2 border  rounded-xl w-1/2"
                       placeholder="firstname"
                       name="firstname"
-                      onChange={handleChange}
+                      onChange={(e)=>{
+                        handleChange(e)
+                       setFirstname(true)
+                      }}
                       value={data.firstname}
                     />
+                   
 
                     <input
                       className="p-2 border rounded-xl w-1/2"
@@ -85,35 +158,74 @@ const Auth = () => {
                   </div>
                   </>
               )}
+               <span style={{display: firstname ? "none" : "block" ,color:"red",fontSize:"12px"}}>First name Required</span>
 
                   <input
                     className="p-2 border rounded-xl"
                     type="text"
                     placeholder="username"
                     name="username"
-                    onChange={handleChange}
+                    onChange={(e)=>{
+                      handleChange(e)
+                     setUsername(true)
+                    }}
                     value={data.username}
                   />
+                   <span
+                style={{
+                  display: username ? "none" : "block",
+                  color: "red",
+                  fontSize: "12px",
+                }}
+              >
+               Username should be atleast 5 characters
+              </span>
                
-              {isSignup &&
-              <input
+              {isSignup &&(<>
+              <input 
                 className="p-2 border  rounded-xl"
                 type="text"
                 placeholder="Email"
                 name="email"
-                onChange={handleChange}
+                onChange={(e)=>{
+                  handleChange(e)
+                 setEmail(true)
+                }}
                 value={data.email}
               />
-               }
+                  <span
+                style={{
+                  display: email ? "none" : "block",
+                  color: "red",
+                  fontSize: "12px",
+                }}
+              >
+               Enter a Valid Email
+              </span>
+              
+              
+              </>)}
                
               <input
                 className="p-2 border  rounded-xl"
                 type="text"
                 placeholder="password"
                 name="password"
-                onChange={handleChange}
+                onChange={(e)=>{
+                  handleChange(e)
+                 setPassword(true)
+                }}
                 value={data.password}
               />
+              <span
+                style={{
+                  display: password ? "none" : "block",
+                  color: "red",
+                  fontSize: "12px",
+                }}
+              >
+               Password should be min 5 characters
+              </span>
 
               {isSignup && (
                 <input
@@ -150,21 +262,25 @@ const Auth = () => {
                     <p className="text-center">OR</p>
                     <hr className="text-gray-400" />
                   </div>
-                  <button className="bg-white border py-2 w-full rounded-xl mt-4 flex justify-center items-center text-sm hover:scale-105 duration-300 ">
+                  {/* <button className="bg-white border py-2 w-full rounded-xl mt-4 flex justify-center items-center text-sm hover:scale-105 duration-300 ">
                     {" "}
                     {isSignup ? "SignUp" : "LogIn"} with Google
-                  </button>
+                  </button> */}
+                 
                 </>
               )}
+              <section className="flex align-middle justify-center hover:scale-110 duration-300 " > <div id="googlebtn" style={{
+                  display: isSignup ? "none" : "block"}}></div></section>
               <hr className="text-gray-400" />
 
               <div>
                 <button
                   style={{ cursor: "pointer" }}
                   className="text-sm hover:scale-x-105 duration-300 "
-                  onClick={() => {
-                    setIsSignup((prev) => !prev);
-                    reverseForm();
+                  onClick={(e) => {
+                    e.preventDefault()
+                    setIsSignup((prev) => !prev)
+                    reverseForm()
                   }}
                 >
                   {" "}

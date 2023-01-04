@@ -1,0 +1,5 @@
+export const postAPI ='Post/'
+export const getpostAPI ='Post/getfollwedpost/'
+export const likeAPI='post/like/'
+export const commentAPI='Post/comment/'
+export const auth ='auth/'
