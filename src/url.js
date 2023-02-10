@@ -1,5 +1,38 @@
 export const postAPI ='Post/'
+export const EditpostAPI='Post/editPost/'
+export const getuserDetails ='user/getUser'
+export const getAspecificuser ='user/getspecificuser/'
+export const clearNotificationAPI ='user/clearNotification'
+export const getuserProfile ='Post//userProfile/'
 export const getpostAPI ='Post/getfollwedpost/'
 export const likeAPI='post/like/'
 export const commentAPI='Post/comment/'
+export const savedAPI='post/save/'
+export const getaPostAPI='post/getpost/'
+export const deletepostAPI='post/delete/'
+export const FollowuserAPI='user/follow/'
+export const unFollowuserAPI='user/unfollow/'
+export const searchUsersAPI='user/searchUsers/' 
+
 export const auth ='auth/'
+export const adminauth='admin/login/'
+export const admingoogle='admin/google/'
+
+export const userChatsAPI='chat/userChats/'
+export const userCreateChatsAPI='chat/createChat/'
+
+export const getMessagesAPI='message/get_messages/'
+export const addMessageAPI='message/addMessage/'
+
+export const ReportPostAPI='report/addcase/'
+
+
+export const getReportAPI='admin/getReport/'
+export const deleteReportAPI='admin/deleteReport/'
+export const getAllUsersAPI='admin/getallusers/'
+export const actionOnUserAPI='admin/blockuser/'
+export const adminRemovepostAPI='admin/removepost/'
+export const getAllPostAPI='admin/allPost/'
+export const adminsinglepostAPI='admin/singlepost/'
+export const admindeletepostAPI='/admin/deletepost/'
+export const dashbordDataAPI='/admin/dashbordData/'

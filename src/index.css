@@ -15,20 +15,30 @@
     }
 
     .sidebarContainer{
-       @apply bg-glass  h-[100%] lg:w-[20rem] rounded-xl ml-6
-       p-3 border transition-all duration-500 border-solid
+       @apply dark:bg-black bg-slate-200 lg:block hidden h-[100%] lg:w-[20rem]  ml-6
+       p-2 border-l transition-all duration-300 border-solid
        border-glass relative
     }
 
     .sidebarContainer2{
-        @apply bg-glass top-0  h-[100%] lg:w-[16rem] rounded-2xl ml-12  
-        p-3 border transition-all duration-700 delay-1000 border-solid
+        @apply bg-glass lg:block hidden top-0  h-[100%] lg:w-[16.5rem] rounded-r-xl ml-14 
+        p-2 border transition-all duration-700 delay-1000 border-solid
         border-glass relative
      }
 
     .sidebar{
+        @apply flex items-center mt-4 px-2 pt-3 rounded-xl
+        cursor-pointer dark:hover:bg-glass hover:bg-black hover:text-white transition-all
+        duration-200
+    }
+    .sidebars{
         @apply flex items-center mt-4 px-2 pt-3 rounded-lg
-        cursor-pointer hover:bg-white hover:text-black transition-all
+        cursor-pointer hover:bg-blue-300 hover:text-black transition-all
         duration-300
     }
+    .sidebaradmin{
+        @apply  h-[100%]  p-3
+         border transition-all  duration-200 border-solid
+        border-glass relative
+     }
 }

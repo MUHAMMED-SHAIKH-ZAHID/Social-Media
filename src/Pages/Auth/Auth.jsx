@@ -1,18 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch} from "react-redux";
-import   { googleUser, loginUser, signUpUser } from "../../Redux/features/AuthSlice";
+import   { addUser, googleUser, loginUser, signUpUser } from "../../Redux/features/AuthSlice";
 import sideimage from "../../Images/halfthrotle.png";
 import jwt_decode from "jwt-decode"
-import { Navigate, useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
+import { getuser } from "../../Redux/features/PostSlice";
 
 
 const Auth = () => {
-  const [isSignup, setIsSignup] = useState(false);
-
   const dispatch=useDispatch()
   const navigate=useNavigate()
-  // const {user} = useSelector((state)=>state)
-  // console.log(user.loading,"its the mufeedhs thory of user")
+  const [isSignup, setIsSignup] = useState(false);
+  const [refresh,setRefresh]= useState(false)
+  
+  if(refresh){
+    console.log("testing refresshshh refreshh");
+    dispatch(addUser())
+    dispatch(getuser())
+  }
+
+
 
 
   const [data, setData] = useState({
@@ -40,6 +47,7 @@ const Auth = () => {
 function handleCallbackResponse(response){
   var userObject=jwt_decode(response.credential);
   dispatch(googleUser(userObject)).then(()=>{
+    setRefresh(true)
     navigate('/')
   })
 }
@@ -47,7 +55,7 @@ function handleCallbackResponse(response){
   useEffect(()=>{
     /*global  google*/
   google.accounts.id.initialize({
-  client_id : "818498261522-04tni7bfiplq7c4igg1qvli7idr8a6k7.apps.googleusercontent.com",
+  client_id :process.env.REACT_APP_GOOGLECLIENTID,
   callback: handleCallbackResponse,
 });
 
@@ -81,6 +89,7 @@ function handleCallbackResponse(response){
           if( firstnameRegex.test(data.firstname) &&  emailRegex.test(data.email)){
 
             dispatch(signUpUser({data})).then(()=>{
+              setRefresh(true)
               navigate('/')
             })
           }else{
@@ -91,6 +100,7 @@ function handleCallbackResponse(response){
       }else{
         console.log("the login button is working successfully")
        dispatch(loginUser({data})).then(()=>{
+        setRefresh(true)
           navigate('/');
        })
       }
@@ -136,7 +146,7 @@ function handleCallbackResponse(response){
                   <div>
                     <input
                       type="text"
-                      className="p-2 border  rounded-xl w-1/2"
+                      className="p-2 border text-zinc-600  rounded-xl w-1/2"
                       placeholder="firstname"
                       name="firstname"
                       onChange={(e)=>{
@@ -148,7 +158,7 @@ function handleCallbackResponse(response){
                    
 
                     <input
-                      className="p-2 border rounded-xl w-1/2"
+                      className="p-2 border text-zinc-600 rounded-xl w-1/2"
                       type="text"
                       placeholder="lastname"
                       name="lastname"
@@ -161,7 +171,7 @@ function handleCallbackResponse(response){
                <span style={{display: firstname ? "none" : "block" ,color:"red",fontSize:"12px"}}>First name Required</span>
 
                   <input
-                    className="p-2 border rounded-xl"
+                    className="p-2 border text-zinc-600 rounded-xl"
                     type="text"
                     placeholder="username"
                     name="username"
@@ -183,7 +193,7 @@ function handleCallbackResponse(response){
                
               {isSignup &&(<>
               <input 
-                className="p-2 border  rounded-xl"
+                className="p-2 border text-zinc-600  rounded-xl"
                 type="text"
                 placeholder="Email"
                 name="email"
@@ -207,7 +217,7 @@ function handleCallbackResponse(response){
               </>)}
                
               <input
-                className="p-2 border  rounded-xl"
+                className="p-2 border text-zinc-600  rounded-xl"
                 type="text"
                 placeholder="password"
                 name="password"
@@ -230,7 +240,7 @@ function handleCallbackResponse(response){
               {isSignup && (
                 <input
                   type="text"
-                  className="p-2 border  rounded-xl"
+                  className="p-2 border text-zinc-600 rounded-xl"
                   placeholder="confirmpassword"
                   name="confirmpassword"
                   onChange={handleChange}
@@ -276,7 +286,7 @@ function handleCallbackResponse(response){
               <div>
                 <button
                   style={{ cursor: "pointer" }}
-                  className="text-sm hover:scale-x-105 duration-300 "
+                  className="text-sm hover:scale-x-105 duration-300 text-black "
                   onClick={(e) => {
                     e.preventDefault()
                     setIsSignup((prev) => !prev)

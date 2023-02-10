@@ -11,6 +11,9 @@ module.exports = {
         'dark-theme-bg': '#999999',
         'dark-theme-text': '#ffffff',
       },
+      fontSize: {
+        time: '9px',
+      }
     },
   },
   plugins: [require("tailwind-scrollbar"),require("tailwind-scrollbar-hide")],

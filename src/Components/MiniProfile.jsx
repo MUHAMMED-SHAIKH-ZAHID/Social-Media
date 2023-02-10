@@ -1,20 +1,31 @@
-import React from 'react'
-import { useSelector } from 'react-redux'
+import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import { addUser } from '../Redux/features/AuthSlice'
+import { getuser } from '../Redux/features/PostSlice'
 
 const MiniProfile = () => {
+    const [refresh,setRefresh]=useState(false)
     const navigate = useNavigate()
-    const {user} = useSelector((state)=>state)
+    const dispatch = useDispatch()
     const logout=()=>{
-        localStorage.clear()
+        localStorage.clear("token")
+        setRefresh(true)
         navigate('/auth')
     }
+    useEffect(()=>{
+      dispatch(addUser())
+      dispatch(getuser())
+    },[refresh])
   return (
-    <div> <p>{user.user.username}</p>
+    <div className='flex'> 
         <img src='' alt='' />
-        <button className='bg-red-400 text-slate-600  p-1 rounded-2xl' onClick={()=>{
+        <button className='  pl-4 rounded-2xl' onClick={()=>{
             logout()
-        }}>Logout</button>
+        }}>
+     
+
+          Logout</button>
     </div>
   )
 }
