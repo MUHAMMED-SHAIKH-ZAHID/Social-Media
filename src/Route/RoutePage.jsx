@@ -24,6 +24,7 @@ const RoutePage = () => {
             <Route path="/saved" exact element={<Home />} />
             <Route path="/singlepost" element={<Home />} />
             <Route path="/messages" element={<Home />} />
+            <Route path='/chat' element={<Home />} />
             <Route path="/conversation" element={<Home />} />
             <Route path="/notification" element={<Home />} />
             <Route path="/search" element={<Home />} />

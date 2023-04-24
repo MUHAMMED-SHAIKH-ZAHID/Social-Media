@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react'
 import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import {  getspecificuser, getuser } from '../Redux/features/PostSlice';
+import { useDispatch } from 'react-redux';
+import {  getspecificuser } from '../Redux/features/PostSlice';
 
-const Chatbox = ({ data, currentuserId,online}) => {
+const  Chatbox = ({ data, currentuserId,online}) => {
   const dispatch = useDispatch()
   const [userData, setUserData] = useState([])
 
@@ -19,6 +19,7 @@ const Chatbox = ({ data, currentuserId,online}) => {
         setUserData(res.payload)
   
       })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [data,currentuserId])
     console.log(data,"its the userData of the Chatbox");
   return (

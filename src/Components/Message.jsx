@@ -95,6 +95,11 @@ const createmessage = (id) => {
   navigate("/messages",{ state: { id: id } })
 }
 
+const chatpage =(id)=>{
+ console.log("chating page id of the year",(id))
+}
+
+console.log("checking the current chat for chatting",currentChat);
   return (
     <div>
       <div className={`${hide ? '' :'hidden'}`}>
@@ -147,7 +152,7 @@ const createmessage = (id) => {
 </div>
       {chats.map(chat=>(
         <div  key={chat?._id}>
-          <div onClick={() => { setCurrentChat(chat) ; setHide(false)}} className={`${hide ? '' :'hidden'}`}>
+          <div onClick={() => { setCurrentChat(chat) ; setHide(false); chatpage(user)}} className={`${hide ? '' :'hidden'}`}>
 
           <Chatbox  data={chat} currentuserId={user} online={checkOnlineStatus(chat)} />
           </div>
